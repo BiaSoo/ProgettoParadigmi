@@ -7,7 +7,7 @@ public class Articolo
     private String categoria;
     private float costo;
 
-    private Articolo(String nome,int quantita, String categoria,float costo){
+    public Articolo(String nome,int quantita, String categoria,float costo){
         this.nome=nome;
         this.quantita=quantita;
         this.categoria=categoria;
