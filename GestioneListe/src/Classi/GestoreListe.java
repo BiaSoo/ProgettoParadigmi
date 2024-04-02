@@ -4,16 +4,23 @@ import java.util.*;
 
 
 public class GestoreListe {
-    private ArrayList<ListaSpesa> listeSpesa;
+    static final ArrayList<ListaSpesa> listeSpesa =new ArrayList<>();
     private Set<String> categorie;
 
     public GestoreListe(){
-        this.listeSpesa=new ArrayList<>();
         this.categorie=new HashSet<>();
     }
 
-    public void aggiungiLista(ListaSpesa lista){
-        listeSpesa.add(lista);
+    public static void controlloEsistenza(String nome)throws GestoreException {
+        for(ListaSpesa listaSpesa: listeSpesa){
+            if(listaSpesa.getNome().equals(nome))
+                throw new GestoreException(" Il nome inserito è già in uso.\n");
+        }
+    }
+    public static void aggiungiLista(String nome) throws GestoreException{
+        controlloEsistenza(nome);
+        ListaSpesa listaSpesa= new ListaSpesa(nome);
+        listeSpesa.add(listaSpesa);
     }
 
     public void rimuoviLista(ListaSpesa lista){

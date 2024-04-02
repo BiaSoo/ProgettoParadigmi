@@ -1,15 +1,13 @@
 package Classi;
 
 import java.util.*;
-import java.io.*;
 
 public class ListaSpesa implements Iterable<Articolo>
 {
     private String nome;
-    private ArrayList<Articolo>articoli;
-    public ListaSpesa(String nome, ArrayList<Articolo>articoli){
+    private ArrayList<Articolo>articoli= new ArrayList<>();
+    public ListaSpesa(String nome){
         this.nome=nome;
-        this.articoli=new ArrayList<>();
     }
 
     public String getNome() {
