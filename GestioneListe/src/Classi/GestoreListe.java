@@ -23,8 +23,10 @@ public class GestoreListe {
         listeSpesa.add(listaSpesa);
     }
 
-    public void rimuoviLista(ListaSpesa lista){
-        listeSpesa.remove(lista);
+    public static void rimuoviLista(String nome) throws GestoreException{
+        controlloEsistenza(nome);
+        ListaSpesa listaSpesa= new ListaSpesa(nome);
+        listeSpesa.remove(listaSpesa);
     }
 
     public ListaSpesa cercaLista(String nome) {
@@ -51,4 +53,9 @@ public class GestoreListe {
             }
         }
     }
+
+    public static int numeroListe(){
+        return listeSpesa.size();
+    }
 }
+
