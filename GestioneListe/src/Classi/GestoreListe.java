@@ -1,5 +1,7 @@
 package Classi;
 
+import java.io.BufferedReader;
+import java.io.*;
 import java.util.*;
 
 
@@ -9,7 +11,9 @@ public class GestoreListe {
 
     public GestoreListe(){
         this.categorie=new HashSet<>();
+        inizializzaCategorie();
     }
+
 
     public static void controlloEsistenza(String nome)throws GestoreException {
         for(ListaSpesa listaSpesa: listeSpesa){
@@ -23,13 +27,13 @@ public class GestoreListe {
         listeSpesa.add(listaSpesa);
     }
 
-    public static void rimuoviLista(String nome) throws GestoreException{
+    public static void rimuoviLista(String nome)throws GestoreException{
         controlloEsistenza(nome);
-        ListaSpesa listaSpesa= new ListaSpesa(nome);
+        ListaSpesa listaSpesa= cercaLista(nome);
         listeSpesa.remove(listaSpesa);
     }
 
-    public ListaSpesa cercaLista(String nome) {
+    public static ListaSpesa cercaLista(String nome) {
         for (ListaSpesa lista : listeSpesa) {
             if (lista.getNome().equals(nome))
                 return lista;
@@ -37,25 +41,42 @@ public class GestoreListe {
         return null;
     }
 
-    public void aggiungiCategoriaProdotto(String categoria){
-        categorie.add(categoria);
+    public static void leggiDaFile(String path,String nomeFile)throws GestoreException, IOException {
+        if(!new File(path).exists())
+            throw new GestoreException("Il path inserito non corrisponde ad alcun file!");
+        controlloEsistenza(nomeFile);
+        ListaSpesa listaSpesa= new ListaSpesa(nomeFile);
+        try (BufferedReader buffer=new BufferedReader(new FileReader(path))){
+            String file= buffer.readLine();
+
+        }
     }
 
-    public void rimuoviCategoriaProdotto(String categoria){
-        categorie.remove(categoria);
-    }
+    public static int numeroListe(){ return listeSpesa.size();}
 
-    public void aggiornaListe(String categoria){
-        for(ListaSpesa lista: listeSpesa){
-            for(Articolo articolo: lista){
-                if(articolo.getCategoria().equals(categoria))
+    private void inizializzaCategorie() {
+        for (ListaSpesa lista : listeSpesa) {
+            for (Articolo articolo : lista.getArticoli()) {
+                String categoria = articolo.getCategoria();
+                categorie.add(categoria);
+            }
+        }
+    }
+    public void rimuoviCategoriaProdotto(String categoria) {
+        categorie.remove(categoria);}
+
+
+    public static void aggiornaListe(String categoria) {
+        for (ListaSpesa lista : listeSpesa) {
+            for (Articolo articolo : lista) {
+                if (articolo.getCategoria().equals(categoria))
                     articolo.setCategoria("Non categorizzato");
             }
         }
     }
-
-    public static int numeroListe(){
-        return listeSpesa.size();
-    }
 }
+
+
+
+
 

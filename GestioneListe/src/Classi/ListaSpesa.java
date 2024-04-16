@@ -1,7 +1,6 @@
 package Classi;
 
 import java.util.*;
-import  Classi.GestoreListe;
 
 public class ListaSpesa implements Iterable<Articolo>
 {
@@ -23,16 +22,8 @@ public class ListaSpesa implements Iterable<Articolo>
         articoli.add(articolo);
     }
 
-    public void rimuoviArticolo(String nome) throws GestoreException{
-        Articolo articoloDaRimuovere=null;
-        for(Articolo articolo: articoli){
-            if(articolo.getNome().equals(nome)) {
-                articoli.remove(articoloDaRimuovere);
-                System.out.println("Articolo "+articoloDaRimuovere+"cancellato correttamente!");
-            }
-            else
-                throw new GestoreException("Nessun articolo trovato con quel nome!");
-        }
+    public void rimuoviArticolo(Articolo articolo){
+        articoli.add(articolo);
     }
 
     public double costoTotale(){
@@ -60,7 +51,8 @@ public class ListaSpesa implements Iterable<Articolo>
 
     }
 
-    public void leggiDaFile(String nomeFile){
 
+    public Articolo[] getArticoli() {
+        return new Articolo[0];
     }
 }
