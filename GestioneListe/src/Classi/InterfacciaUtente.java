@@ -17,7 +17,7 @@ public class InterfacciaUtente
 {
     public static void main(String[] args) throws ListaException {
         int scelta;
-        String x,nome,nomeArticolo="",categoriaArticolo="",quantitaArticolo = "", costoArticolo="";
+        String x,nome,nomeArticolo="",categoriaArticolo="",quantitaArticolo = "", costoArticolo="",file="lista.txt";
 
         do {
             System.out.println("""
@@ -77,6 +77,20 @@ public class InterfacciaUtente
 
                 case 4:
                     System.out.println("SCRITTURA LISTA DELLA SPESA SU FILE\n");
+                    System.out.println("Inserisci il nome della lista che si vuole scrivere sul file: ");
+                    nome=Input.readString();
+                    if(nome!=""){
+                        ListaSpesa listaSpesa;
+                        try{
+                            listaSpesa=ricercaLista(nome);
+                            listaSpesa.scriviSuFile(file);
+                        }
+                        catch (GestoreException e){
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                    else
+                        System.out.println("Lista della spesa non trovata!");
                     break;
 
                 case 5:

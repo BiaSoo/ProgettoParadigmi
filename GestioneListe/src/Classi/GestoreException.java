@@ -2,7 +2,7 @@ package Classi;
 
 public class GestoreException extends Exception{
 
-    public GestoreException(String errore) {
-        super();
+    public GestoreException(String messaggio) {
+        super(messaggio);
     }
 }

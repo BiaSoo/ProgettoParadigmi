@@ -15,22 +15,31 @@ public class GestoreListe {
     }
 
 
-    public static void controlloEsistenza(String nome)throws GestoreException {
-        for(ListaSpesa listaSpesa: listeSpesa){
-            if(listaSpesa.getNome().equals(nome))
-                throw new GestoreException(" Il nome inserito è già in uso.\n");
+    public static void controlloEsistenza(String nome) throws GestoreException {
+        for (ListaSpesa listaSpesa : listeSpesa) {
+            if (listaSpesa.getNome().equals(nome)) {
+                throw new GestoreException("Esiste già una lista con questo nome");
+            }
         }
     }
-    public static void aggiungiLista(String nome) throws GestoreException{
+
+    public static void aggiungiLista(String nome) throws GestoreException {
         controlloEsistenza(nome);
-        ListaSpesa listaSpesa= new ListaSpesa(nome);
+        ListaSpesa listaSpesa = new ListaSpesa(nome);
         listeSpesa.add(listaSpesa);
     }
 
+
     public static void rimuoviLista(String nome)throws GestoreException{
-        controlloEsistenza(nome);
         ListaSpesa listaSpesa= cercaLista(nome);
-        listeSpesa.remove(listaSpesa);
+        if(numeroListe()!=0) {
+            if (listaSpesa != null)
+                listeSpesa.remove(listaSpesa);
+            else
+                throw new GestoreException("Rimozione lista non avvenuta, il nome della lista inserito non eiste!");
+        }
+        else
+            throw new GestoreException("Non risultano presenti liste della spesa!");
     }
 
     public static ListaSpesa cercaLista(String nome) {
