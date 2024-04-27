@@ -22,8 +22,21 @@ public class ListaSpesa implements Iterable<Articolo>
         articoli.add(articolo);
     }
 
-    public void rimuoviArticolo(Articolo articolo){
-        articoli.add(articolo);
+    public void rimuoviArticolo(String nome) throws ListaException {
+        Articolo eliminaArticolo=null;
+        for(Articolo articolo: articoli){
+            if(articolo.getNome().equals(nome)){
+                eliminaArticolo=articolo;
+                break;
+            }
+        }
+        if(eliminaArticolo!=null){
+            articoli.remove(eliminaArticolo);
+            System.out.println("Articolo eliminato con successo! ");
+        }
+        else
+            throw new ListaException("Nessun articolo trovato!");
+
     }
 
     public double costoTotale(){
@@ -52,7 +65,23 @@ public class ListaSpesa implements Iterable<Articolo>
     }
 
 
-    public Articolo[] getArticoli() {
-        return new Articolo[0];
+    public ArrayList<Articolo> getArticoli() {
+        return articoli;
+    }
+
+    public void setArticoli(ArrayList<Articolo>articoli){
+        this.articoli=articoli;
+    }
+
+    public void aggiornaArticolo( Articolo a, String nome, int quantita, String categoria, float costo) throws ListaException, ArticoloException
+    {
+        if (!articoli.contains(a))
+        {
+            throw new ListaException("L'articolo indicato non risulta nella lista della spesa!");
+        }
+    }
+
+    public int numeroArticoli(){
+        return articoli.size();
     }
 }
