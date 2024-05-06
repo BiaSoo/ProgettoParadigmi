@@ -1,24 +1,324 @@
 package Classi;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import jbook.util.Input;
-import Classi.GestoreListe;
-import Classi.ListaSpesa;
-import Classi.Articolo;
-
 import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import jbook.util.Input;
 
-public class InterfacciaUtente
+
+public class InterfacciaUtente extends JFrame
 {
+    private static boolean isGUI = true; // Flag per tenere traccia dello stato dell'interfaccia
+    public static class InterfacciaSwing extends JFrame {
+
+        private static JTextArea textArea;
+        private static JTextField textFieldNomeLista;
+        private JTextField textFieldNomeArticolo;
+        private JTextField textFieldQuantita;
+        private JTextField textFieldCategoria;
+        private JTextField textFieldCosto;
+
+        public InterfacciaSwing() {
+            // Implementazione dell'interfaccia grafica
+            super("Interfaccia Grafica");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setSize(400, 300);
+            textArea = new JTextArea();
+
+            // Pannello principale
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new BorderLayout());
+
+            // Passaggio alla CLI
+            JPanel buttonPanel = new JPanel();
+            JButton switchToCLIButton = new JButton("Passa a CLI");
+            switchToCLIButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    isGUI = false; // Imposta il flag su false per passare a CLI
+                    dispose(); // Chiudi l'interfaccia grafica
+                    try {
+                        InterfacciaCLI(); // Avvia l'interfaccia da riga di comando
+                    } catch (ListaException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+
+            JButton stayOnGUIButton = new JButton("Rimani su GUI");
+            stayOnGUIButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    isGUI = true; // Imposta il flag su true per restare sulla GUI
+                    aggiornaInterfaccia(); // Aggiorna l'interfaccia grafica
+                    stayOnGUIButton.setVisible(false);
+                    switchToCLIButton.setVisible(false);
+
+                }
+            });
+
+            buttonPanel.add(switchToCLIButton);
+            buttonPanel.add(stayOnGUIButton);
+
+            mainPanel.add(buttonPanel, BorderLayout.CENTER);
+
+            add(mainPanel);
+        }
+
+        public void aggiornaInterfaccia() {
+            // Aggiorna l'interfaccia grafica
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new BorderLayout());
+            setVisible(true);
+
+            // Pannello menu principale
+            JPanel menuPanel = new JPanel(new FlowLayout());
+            JLabel labeltitolo = new JLabel("MENU OPERAZIONI: ");
+            String[] voci = {"1. Creazione lista della spesa", "2. Eliminazione lista della spesa", "3. Creazione lista da file", "4. Scrittura lista su file", "5. Visualizzazione liste della spesa", "6. Modifica lista della spesa", "7. Uscita"};
+
+            JComboBox<String> listaMenu1 = new JComboBox<>(voci);
+            listaMenu1.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+
+                    JComboBox comboBox = (JComboBox) e.getSource();
+
+                    String scelta = (String) comboBox.getSelectedItem();
+                    labeltitolo.setVisible(false);
+
+
+                    switch (scelta) {
+
+                        case "1. Creazione lista della spesa":
+                            listaMenu1.setVisible(false);
+                            menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
+
+                            // Pannello per il titolo
+                            JPanel titlePanel = new JPanel();
+                            titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
+                            JLabel titleLabel = new JLabel("CREAZIONE LISTA DELLA SPESA:");
+                            titlePanel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a sinistra
+                            titlePanel.add(titleLabel);
+                            titlePanel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a destra
+                            menuPanel.add(titlePanel);
+
+                            // Pannello per le opzioni
+                            JPanel optionsPanel = new JPanel(new FlowLayout());
+
+                            // Aggiungi le opzioni al pannello delle opzioni
+                            optionsPanel.add(new JLabel("Nome lista:"));
+                            textFieldNomeLista = new JTextField(20);
+                            optionsPanel.add(textFieldNomeLista);
+                            JButton btnCreaLista = new JButton("Crea Lista");
+
+                            btnCreaLista.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    String nomeLista = textFieldNomeLista.getText().trim(); // Rimuovi eventuali spazi vuoti all'inizio e alla fine
+                                    if (nomeLista.isEmpty()) {
+                                        JOptionPane.showMessageDialog(null, "Inserisci un nome per la lista!", "Errore", JOptionPane.ERROR_MESSAGE);
+                                        return; // Esci dal metodo senza fare altro
+                                    }
+
+                                    // Verifica se il nome della lista è già in uso
+                                    if (nomeListaGiaInUso(nomeLista)) {
+                                        JOptionPane.showMessageDialog(null, "Il nome della lista è già in uso, inseriscine un altro!", "Errore", JOptionPane.ERROR_MESSAGE);
+                                        return; // Esci dal metodo senza fare altro
+                                    }
+
+                                    try {
+                                        GestoreListe.aggiungiLista(nomeLista);
+                                        JOptionPane.showMessageDialog(null, "Lista creata: " + nomeLista, "Successo", JOptionPane.INFORMATION_MESSAGE);
+                                        updateTextArea("Lista creata: " + nomeLista);
+                                    } catch (GestoreException ex) {
+                                        JOptionPane.showMessageDialog(null, "Errore durante la creazione della lista: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+                                        updateTextArea("Errore: " + ex.getMessage());
+                                    }
+                                }
+                            });
+
+                            optionsPanel.add(btnCreaLista);
+
+                            // Aggiungi il pannello delle opzioni al centro del menuPanel
+                            menuPanel.add(optionsPanel);
+
+                            break;
+
+                        case "2. Eliminazione lista della spesa":
+                            listaMenu1.setVisible(false);
+                            menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
+
+                            // Pannello per il titolo
+                            JPanel title2Panel = new JPanel();
+                            title2Panel.setLayout(new BoxLayout(title2Panel, BoxLayout.X_AXIS));
+                            JLabel title2Label = new JLabel("ELIMINAZIONE LISTA DELLA SPESA:");
+                            title2Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a sinistra
+                            title2Panel.add(title2Label);
+                            title2Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a destra
+                            menuPanel.add(title2Panel);
+
+                            // Pannello per le opzioni
+                            JPanel options2Panel = new JPanel(new FlowLayout());
+
+                            // Aggiungi le opzioni al pannello delle opzioni
+                            options2Panel.add(new JLabel("Nome lista da eliminare:"));
+                            textFieldNomeLista = new JTextField(20);
+                            options2Panel.add(textFieldNomeLista);
+                            JButton btnEliminaLista = new JButton("Elimina lista");
+
+                            btnEliminaLista.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    String nomeLista = textFieldNomeLista.getText().trim(); // Rimuovi eventuali spazi vuoti all'inizio e alla fine
+                                    if (nomeLista.isEmpty()) {
+                                        JOptionPane.showMessageDialog(null, "Inserisci un nome per la lista!", "Errore", JOptionPane.ERROR_MESSAGE);
+                                        return; // Esci dal metodo senza fare altro
+                                    }
+
+                                    // Verifica se il nome della lista è già in uso
+                                    if (!nomeListaGiaInUso(nomeLista)) {
+                                        JOptionPane.showMessageDialog(null, "Il nome della lista non esiste!", "Errore", JOptionPane.ERROR_MESSAGE);
+                                        return; // Esci dal metodo senza fare altro
+                                    }
+
+                                    try {
+                                        GestoreListe.rimuoviLista(nomeLista); // Rimuovi la lista
+                                        JOptionPane.showMessageDialog(null, "Lista eliminata: " + nomeLista, "Successo", JOptionPane.INFORMATION_MESSAGE);
+                                        updateTextArea("Lista eliminata: " + nomeLista);
+                                    } catch (GestoreException ex) {
+                                        JOptionPane.showMessageDialog(null, "Errore durante l'eliminazione della lista: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+                                        updateTextArea("Errore: " + ex.getMessage());
+                                    }
+                                }
+                            });
+
+                            options2Panel.add(btnEliminaLista);
+
+                            // Aggiungi il pannello delle opzioni al centro del menuPanel
+                            menuPanel.add(options2Panel);
+
+                            break;
+
+
+                    }
+                    JLabel selezione=new JLabel("Hai selezionato: " + scelta);
+
+                    menuPanel.add(selezione,BorderLayout.SOUTH);
+                    mainPanel.add(menuPanel);
+                    pack();
+                }
+            });
+
+            menuPanel.add(labeltitolo);
+            menuPanel.add(listaMenu1);
+            mainPanel.add(menuPanel, BorderLayout.CENTER);
+
+            add(mainPanel);
+            pack();
+        }
+            /*topPanel.add(new JLabel("Nome Lista:"));
+            textFieldNomeLista = new JTextField(20);
+            topPanel.add(textFieldNomeLista);
+            JButton btnCreaLista = new JButton("Crea Lista");
+            btnCreaLista.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String nomeLista = textFieldNomeLista.getText();
+                    try {
+                        GestoreListe.aggiungiLista(nomeLista);
+                        updateTextArea("Lista creata: " + nomeLista);
+                    } catch (GestoreException ex) {
+                        updateTextArea("Errore: " + ex.getMessage());
+                    }
+                }
+            });
+            topPanel.add(btnCreaLista);
+            mainPanel.add(topPanel, BorderLayout.NORTH);
+
+            // TextArea per visualizzare le operazioni
+            textArea = new JTextArea();
+            textArea.setEditable(false);
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+            // Pannello inferiore per l'input degli articoli
+            JPanel bottomPanel = new JPanel(new GridLayout(3, 2));
+            bottomPanel.add(new JLabel("Nome Articolo:"));
+            textFieldNomeArticolo = new JTextField(20);
+            bottomPanel.add(textFieldNomeArticolo);
+            bottomPanel.add(new JLabel("Quantità:"));
+            textFieldQuantita = new JTextField(10);
+            bottomPanel.add(textFieldQuantita);
+            bottomPanel.add(new JLabel("Categoria:"));
+            textFieldCategoria = new JTextField(10);
+            bottomPanel.add(textFieldCategoria);
+            bottomPanel.add(new JLabel("Costo:"));
+            textFieldCosto = new JTextField(10);
+            bottomPanel.add(textFieldCosto);
+            JButton btnAggiungiArticolo = new JButton("Aggiungi Articolo");
+            btnAggiungiArticolo.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent a) {
+                    String nomeLista = textFieldNomeLista.getText();
+                    String nomeArticolo = textFieldNomeArticolo.getText();
+                    int quantita = Integer.parseInt(textFieldQuantita.getText());
+                    String categoria = textFieldCategoria.getText();
+                    float costo = Float.parseFloat(textFieldCosto.getText());
+                    ListaSpesa lista = GestoreListe.cercaLista(nomeLista);
+                    Articolo articolo = new Articolo(nomeArticolo, quantita, categoria, costo);
+                    lista.aggiungiArticolo(articolo);
+                    updateTextArea("Articolo aggiunto alla lista " + nomeLista + ": " + nomeArticolo);
+                }
+            });
+            bottomPanel.add(btnAggiungiArticolo);
+            mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+*/
+
+
+
+        private boolean nomeListaGiaInUso(String nomeLista) {
+            for (ListaSpesa lista : GestoreListe.listeSpesa) {
+                if (lista.getNome().equals(nomeLista)) {
+                    return true; // Il nome della lista è già in uso
+                }
+            }
+            return false; // Il nome della lista non è in uso
+        }
+
+        private static void updateTextArea(String text) {
+            textArea.append(text + "\n");
+
+        }
+    }
+
+
     public static void main(String[] args) throws ListaException {
+        if (isGUI) {
+            // Avvia l'interfaccia grafica
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    new InterfacciaSwing().setVisible(true);
+                }
+            });
+        } else {
+            // Avvia l'interfaccia da riga di comando
+            InterfacciaCLI();
+        }}
+          private static void InterfacciaCLI() throws ListaException {
+
         int scelta;
         String x,nome,nomeArticolo="",categoriaArticolo="",quantitaArticolo = "", costoArticolo="",file="lista.txt";
 
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                InterfacciaSwing interfaccia = new InterfacciaSwing();
+                interfaccia.setVisible(true);
+            }
+        });
         do {
             System.out.println("""
     		        MENU OPERAZIONI:
