@@ -94,9 +94,9 @@ public class InterfacciaUtente extends JFrame
                     switch (scelta) {
 
                         case "1. Creazione lista della spesa":
-                            listaMenu1.setVisible(false);
+                            
                             menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
-
+                            listaMenu1.setVisible(false);
                             // Pannello per il titolo
                             JPanel titlePanel = new JPanel();
                             titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
@@ -142,10 +142,26 @@ public class InterfacciaUtente extends JFrame
                             });
 
                             optionsPanel.add(btnCreaLista);
+                            JButton btnMenu1 = new JButton("Torna al Menu");
+                            btnMenu1.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    // Rimuovi i componenti aggiunti durante la creazione della lista
+                                    menuPanel.removeAll();
+                                    // Riaggiungi il menu principale
+                                    menuPanel.add(labeltitolo);
+                                    menuPanel.add(listaMenu1);
+                                    listaMenu1.setVisible(true);
+                                    menuPanel.revalidate(); // Rivalida il layout del pannello
+                                    menuPanel.repaint(); // Ridisegna il pannello
+                                }
+                            });
+
 
                             // Aggiungi il pannello delle opzioni al centro del menuPanel
                             menuPanel.add(optionsPanel);
 
+                            menuPanel.add(btnMenu1);
                             break;
 
                         case "2. Eliminazione lista della spesa":
@@ -197,11 +213,41 @@ public class InterfacciaUtente extends JFrame
                             });
 
                             options2Panel.add(btnEliminaLista);
+                            JButton btnMenu2 = new JButton("Torna al Menu");
+                            btnMenu2.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    // Rimuovi i componenti aggiunti durante la creazione della lista
+                                    menuPanel.removeAll();
+                                    // Riaggiungi il menu principale
+                                    menuPanel.add(labeltitolo);
+                                    menuPanel.add(listaMenu1);
+                                    listaMenu1.setVisible(true);
+                                    menuPanel.revalidate(); // Rivalida il layout del pannello
+                                    menuPanel.repaint(); // Ridisegna il pannello
+                                }
+                            });
+
 
                             // Aggiungi il pannello delle opzioni al centro del menuPanel
                             menuPanel.add(options2Panel);
 
+                            menuPanel.add(btnMenu2);
                             break;
+
+                        case "3.Creazione lista da file":
+
+                            break;
+
+                        case "4. Scrittura lista su file":
+
+                            break;
+
+                        case "5. Visualizzazione liste della spesa":
+
+                            break;
+
+                        case "6. Modifica lista della spesa":
 
 
                     }
@@ -220,30 +266,7 @@ public class InterfacciaUtente extends JFrame
             add(mainPanel);
             pack();
         }
-            /*topPanel.add(new JLabel("Nome Lista:"));
-            textFieldNomeLista = new JTextField(20);
-            topPanel.add(textFieldNomeLista);
-            JButton btnCreaLista = new JButton("Crea Lista");
-            btnCreaLista.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String nomeLista = textFieldNomeLista.getText();
-                    try {
-                        GestoreListe.aggiungiLista(nomeLista);
-                        updateTextArea("Lista creata: " + nomeLista);
-                    } catch (GestoreException ex) {
-                        updateTextArea("Errore: " + ex.getMessage());
-                    }
-                }
-            });
-            topPanel.add(btnCreaLista);
-            mainPanel.add(topPanel, BorderLayout.NORTH);
-
-            // TextArea per visualizzare le operazioni
-            textArea = new JTextArea();
-            textArea.setEditable(false);
-            JScrollPane scrollPane = new JScrollPane(textArea);
-            mainPanel.add(scrollPane, BorderLayout.CENTER);
+            /*
 
             // Pannello inferiore per l'input degli articoli
             JPanel bottomPanel = new JPanel(new GridLayout(3, 2));
