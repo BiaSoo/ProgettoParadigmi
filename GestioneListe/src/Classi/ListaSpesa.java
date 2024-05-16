@@ -1,6 +1,12 @@
 package Classi;
 
+import java.awt.List;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import Classi.GestoreListe;
+import Classi.Articolo;
 
 public class ListaSpesa implements Iterable<Articolo>
 {
@@ -9,6 +15,7 @@ public class ListaSpesa implements Iterable<Articolo>
     public ListaSpesa(String nome){
         this.nome=nome;
     }
+
 
     public String getNome() {
         return nome;
@@ -60,8 +67,16 @@ public class ListaSpesa implements Iterable<Articolo>
         return articoli.iterator();
     }
 
-    public void scriviSuFile(String nomeFile){
-
+    public void scriviSuFile(String nomeFile) throws ListaException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeFile))) {
+            for (Articolo articolo : articoli) {
+                // Scrivi i dettagli dell'articolo nel file, ad esempio: nome, categoria, quantità, costo
+                writer.write(articolo.getNome() + "," + articolo.getCategoria() + "," + articolo.getQuantita() + "," + articolo.getCosto());
+                writer.newLine(); // Vai a capo dopo ogni articolo
+            }
+        } catch (IOException e) {
+            throw new ListaException("Impossibile scrivere su file: " + e.getMessage());
+        }
     }
 
 
