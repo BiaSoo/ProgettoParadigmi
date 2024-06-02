@@ -28,12 +28,20 @@ public class InterfacciaUtente extends JFrame
             // Implementazione dell'interfaccia grafica
             super("Interfaccia Grafica");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(400, 300);
+            setSize(800, 500);
+
             textArea = new JTextArea();
 
             // Pannello principale
             JPanel mainPanel = new JPanel();
-            mainPanel.setLayout(new BorderLayout());
+            mainPanel.setLayout(new BoxLayout(mainPanel,BoxLayout.Y_AXIS));
+            JPanel titlePanel = new JPanel();
+            titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
+            JLabel labeltitolo = new JLabel("Benvenuto! ");
+            titlePanel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a sinistra
+            titlePanel.add(labeltitolo);
+            titlePanel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a destra
+            mainPanel.add(titlePanel);
 
             // Passaggio alla CLI
             JPanel buttonPanel = new JPanel();
@@ -57,7 +65,7 @@ public class InterfacciaUtente extends JFrame
                 public void actionPerformed(ActionEvent e) {
                     isGUI = true; // Imposta il flag su true per restare sulla GUI
                     InterfacciaUtenteGUI interfacciaUtenteGUI =new InterfacciaUtenteGUI();
-                    interfacciaUtenteGUI.aggiornaInterfaccia(); // Aggiorna l'interfaccia grafica
+                    interfacciaUtenteGUI.Interfaccia(); // Interfaccia grafica
                     stayOnGUIButton.setVisible(false);
                     switchToCLIButton.setVisible(false);
                     dispose();
@@ -71,42 +79,6 @@ public class InterfacciaUtente extends JFrame
 
             add(mainPanel);
         }
-
-
-            /*
-
-            // Pannello inferiore per l'input degli articoli
-            JPanel bottomPanel = new JPanel(new GridLayout(3, 2));
-            bottomPanel.add(new JLabel("Nome Articolo:"));
-            textFieldNomeArticolo = new JTextField(20);
-            bottomPanel.add(textFieldNomeArticolo);
-            bottomPanel.add(new JLabel("Quantità:"));
-            textFieldQuantita = new JTextField(10);
-            bottomPanel.add(textFieldQuantita);
-            bottomPanel.add(new JLabel("Categoria:"));
-            textFieldCategoria = new JTextField(10);
-            bottomPanel.add(textFieldCategoria);
-            bottomPanel.add(new JLabel("Costo:"));
-            textFieldCosto = new JTextField(10);
-            bottomPanel.add(textFieldCosto);
-            JButton btnAggiungiArticolo = new JButton("Aggiungi Articolo");
-            btnAggiungiArticolo.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent a) {
-                    String nomeLista = textFieldNomeLista.getText();
-                    String nomeArticolo = textFieldNomeArticolo.getText();
-                    int quantita = Integer.parseInt(textFieldQuantita.getText());
-                    String categoria = textFieldCategoria.getText();
-                    float costo = Float.parseFloat(textFieldCosto.getText());
-                    ListaSpesa lista = GestoreListe.cercaLista(nomeLista);
-                    Articolo articolo = new Articolo(nomeArticolo, quantita, categoria, costo);
-                    lista.aggiungiArticolo(articolo);
-                    updateTextArea("Articolo aggiunto alla lista " + nomeLista + ": " + nomeArticolo);
-                }
-            });
-            bottomPanel.add(btnAggiungiArticolo);
-            mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-*/
     }
 
 
