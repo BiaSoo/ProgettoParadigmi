@@ -29,22 +29,26 @@ public class ListaSpesa implements Iterable<Articolo>
         articoli.add(articolo);
     }
 
-    public void rimuoviArticolo(String nome) throws ListaException {
-        Articolo eliminaArticolo=null;
-        for(Articolo articolo: articoli){
-            if(articolo.getNome().equals(nome)){
-                eliminaArticolo=articolo;
-                break;
+    public Articolo cercaArticoloPerNome(String nome) {
+        for (Articolo articolo : articoli) {
+            if (articolo.getNome().equals(nome)) {
+                return articolo;
             }
         }
-        if(eliminaArticolo!=null){
-            articoli.remove(eliminaArticolo);
-            System.out.println("Articolo eliminato con successo! ");
-        }
-        else
-            throw new ListaException("Nessun articolo trovato!");
-
+        return null; // Se non viene trovato alcun articolo con il nome specificato
     }
+
+
+    public void rimuoviArticolo(String nome) throws ListaException {
+        Articolo articoloDaRimuovere = cercaArticoloPerNome(nome);
+        if (articoloDaRimuovere != null) {
+            articoli.remove(articoloDaRimuovere);
+            System.out.println("Articolo eliminato con successo! ");
+        } else {
+            throw new ListaException("Nessun articolo trovato!");
+        }
+    }
+
 
     public double costoTotale(){
         double costoTot=0;
@@ -93,6 +97,21 @@ public class ListaSpesa implements Iterable<Articolo>
         if (!articoli.contains(a))
         {
             throw new ListaException("L'articolo indicato non risulta nella lista della spesa!");
+        }
+        int indice = articoli.indexOf(a);
+        Articolo articoloDaAggiornare = articoli.get(indice);
+
+        if (nome != null && !nome.isEmpty()) {
+            articoloDaAggiornare.setNome(nome);
+        }
+        if (quantita >= 0) {
+            articoloDaAggiornare.setQuantita(quantita);
+        }
+        if (categoria != null && !categoria.isEmpty()) {
+            articoloDaAggiornare.setCategoria(categoria);
+        }
+        if (costo >= 0) {
+            articoloDaAggiornare.setCosto(costo);
         }
     }
 

@@ -12,7 +12,7 @@ import Classi.ListaSpesa;
 import Classi.InterfacciaUtente;
 
 /*TODO:
- * 4. Creare una logica per la gestione delle categorie dei prodotti, sicuramente creare una lista di categorie che può essere modificata aggiungendone una nuova
+ * 4. Creare una logica per la gestione delle categorie dei prodotti
  * 5. Fare in modo che si possa ottenere il riepilogo di tutta la lista
  * 6. Calcolare e mostrare il totale della lista, che cambia a seconda degli articoli e della quantità di questi inseriti
  * 7. Fare i test delle classi
@@ -562,7 +562,7 @@ public class InterfacciaUtenteGUI extends JFrame{
                                                     String quantitaString = textFieldQuantita.getText().trim();
                                                     String prezzoString = textFieldPrezzo.getText().trim();
                                                     String categoria = textFieldCategoria.getText().trim();
-                                                    if (nomeLista.isEmpty() || nomeArticolo.isEmpty() || quantitaString.isEmpty()) {
+                                                    if (nomeLista.isEmpty() || nomeArticolo.isEmpty()) {
                                                         JOptionPane.showMessageDialog(null, "Inserisci nome lista, nome articolo e quantità!", "Errore", JOptionPane.ERROR_MESSAGE);
                                                         return;
                                                     }
@@ -570,14 +570,16 @@ public class InterfacciaUtenteGUI extends JFrame{
 
                                                     int quantita;
                                                     try {
-                                                        quantita = Integer.parseInt(quantitaString);
+                                                        if (quantitaString.isEmpty()) {
+                                                            quantita = 1;
+                                                        } else {
+                                                            quantita = Integer.parseInt(quantitaString);
+                                                            if (quantita <= 0) {
+                                                                throw new NumberFormatException();
+                                                            }
+                                                        }
                                                     } catch (NumberFormatException ex) {
-                                                        JOptionPane.showMessageDialog(null, "Quantità non valida!", "Errore", JOptionPane.ERROR_MESSAGE);
-                                                        return;
-                                                    }
-
-                                                    if (quantita <= 0) {
-                                                        JOptionPane.showMessageDialog(null, "La quantità deve essere maggiore di zero!", "Errore", JOptionPane.ERROR_MESSAGE);
+                                                        JOptionPane.showMessageDialog(null, "La quantità deve essere un numero intero positivo!", "Errore", JOptionPane.ERROR_MESSAGE);
                                                         return;
                                                     }
 
@@ -591,6 +593,13 @@ public class InterfacciaUtenteGUI extends JFrame{
                                                     if (prezzo <= 0) {
                                                         JOptionPane.showMessageDialog(null, "Il prezzo deve essere maggiore di zero!", "Errore", JOptionPane.ERROR_MESSAGE);
                                                         return;
+                                                    }
+
+                                                    String categoriaArticolo;
+                                                    if (categoria.isEmpty()) {
+                                                        categoriaArticolo = "non categorizzato";
+                                                    } else {
+                                                        categoriaArticolo = categoria;
                                                     }
 
                                                     // Verifica se l'articolo esiste già nella lista
