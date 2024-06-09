@@ -9,7 +9,7 @@ public class Articolo
     private int quantita;
     private String categoria;
     private float costo;
-    private static Set<String> categorie=new HashSet<>();
+
 
     public Articolo(String nome,int quantita, String categoria,float costo){
         this.nome=nome;
@@ -17,16 +17,8 @@ public class Articolo
         this.categoria=categoria;
         this.costo=costo;
 
-        aggiungiCategoria(categoria);
     }
 
-    private static void aggiungiCategoria(String categoria) {
-        categorie.add(categoria);
-    }
-
-    public static Set<String> getCategorie(){
-        return categorie;
-    }
 
     public String getNome() {
         return nome;

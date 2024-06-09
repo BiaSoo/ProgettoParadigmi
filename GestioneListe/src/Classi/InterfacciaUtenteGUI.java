@@ -12,12 +12,15 @@ import Classi.ListaSpesa;
 import Classi.InterfacciaUtente;
 
 /*TODO:
- * 4. Creare una logica per la gestione delle categorie dei prodotti
+* 3. Fare il controllo prima di inserire qualsiasi valore, come ad esempio il nuovo nome della lista
+ * 4. Creare una logica per la gestione delle categorie dei prodotti (quasi ultimato)
  * 5. Fare in modo che si possa ottenere il riepilogo di tutta la lista
  * 6. Calcolare e mostrare il totale della lista, che cambia a seconda degli articoli e della quantità di questi inseriti
  * 7. Fare i test delle classi
  * 8. Fare in modo che ci siano le stesse opzioni sia su GUI che su CLI
- *
+ * 9. fare in modo che una volta che viene rimossa la categoria gli articoli di quella categoria vengono marchiati con " non categorizzati"
+ * nel case 4 del menu operazioni lista direi di aggiungere il dato una categoria trovami tutti gli articoli di quella categoria e fammi il totale
+ * sistema il nuero di articoli che correisponderà alla somma delle quantità
  *
  */
 
