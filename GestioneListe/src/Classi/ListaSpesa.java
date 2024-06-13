@@ -115,7 +115,11 @@ public class ListaSpesa implements Iterable<Articolo>
         }
     }
 
-    public int numeroArticoli(){
-        return articoli.size();
+    public int numeroArticoli() {
+        int totaleArticoli = 0;
+        for (Articolo articolo : articoli) {
+            totaleArticoli += articolo.getQuantita();
+        }
+        return totaleArticoli;
     }
 }

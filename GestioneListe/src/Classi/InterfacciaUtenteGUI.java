@@ -11,22 +11,27 @@ import jbook.util.Input;
 import Classi.ListaSpesa;
 import Classi.InterfacciaUtente;
 
+import static Classi.GestoreListe.ricercaLista;
+import static Classi.InterfacciaUtente.cercaArticoliPerPrefisso;
+
 /*TODO:
-* 3. Fare il controllo prima di inserire qualsiasi valore, come ad esempio il nuovo nome della lista
- * 4. Creare una logica per la gestione delle categorie dei prodotti (quasi ultimato)
- * 5. Fare in modo che si possa ottenere il riepilogo di tutta la lista
- * 6. Calcolare e mostrare il totale della lista, che cambia a seconda degli articoli e della quantità di questi inseriti
- * 7. Fare i test delle classi
- * 8. Fare in modo che ci siano le stesse opzioni sia su GUI che su CLI
- * 9. fare in modo che una volta che viene rimossa la categoria gli articoli di quella categoria vengono marchiati con " non categorizzati"
- * nel case 4 del menu operazioni lista direi di aggiungere il dato una categoria trovami tutti gli articoli di quella categoria e fammi il totale
- * sistema il nuero di articoli che correisponderà alla somma delle quantità
- *
+ * 2. Fare i test delle classi
+ * 3. Fare in modo che ci siano le stesse opzioni sia su GUI che su CLI
+ * 4. in modifica lista della spesa:
+ * manca l'opzione per la modifica del nome della lista
+ * in rimozione articolo va sistemato il layout
+ * in modifica articolo va sistemato il layout
+ * in visualizzazione lista va sistemato il layout
+ * 5: ricerca rapida articolo: vanno posti dei controlli e una migliore gestione delle eccezioni
+ * 6: il case 8 per la visualizzazione di una lista non funziona e non chiede in input alcuna lista
  */
 
 public class InterfacciaUtenteGUI extends JFrame{
     private static JTextArea textArea;
+    private ListaSpesa listaSpesaCorrente = null;
 
+
+    ListaSpesa listaSpesa;
     private boolean nomeListaGiaInUso(String nomeLista) {
         for (ListaSpesa lista : GestoreListe.listeSpesa) {
             if (lista.getNome().equals(nomeLista)) {
@@ -64,7 +69,17 @@ public class InterfacciaUtenteGUI extends JFrame{
 
         // Pannello per le opzioni
         JPanel optionsPanel = new JPanel();
-        String[] voci = {"1. Creazione lista della spesa", "2. Eliminazione lista della spesa", "3. Creazione lista da file", "4. Scrittura lista su file", "5. Visualizzazione liste della spesa", "6. Modifica lista della spesa"};
+        String[] voci = {"1. Creazione lista della spesa",
+                "2. Eliminazione lista della spesa",
+                "3. Creazione lista da file",
+                "4. Scrittura lista su file",
+                "5. Visualizzazione liste della spesa",
+                "6. Modifica lista della spesa",
+                "7. Ricerca rapida articolo",
+                "8. Visualizzazione lista della spesa",
+                "9. Aggiunta categoria",
+                "10. Cancellazione categoria",
+                "11. Modifica categoria"};
         JComboBox<String> listaMenu1 = new JComboBox<>(voci);
         optionsPanel.add(listaMenu1);
         listaMenu1.addActionListener(new ActionListener() {
@@ -72,7 +87,7 @@ public class InterfacciaUtenteGUI extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 JComboBox comboBox = (JComboBox) e.getSource();
                 String scelta = (String) comboBox.getSelectedItem();
-                labeltitolo.setVisible(false);
+                labeltitolo.setVisible(true);
 
 
                 switch (scelta) {
@@ -80,6 +95,7 @@ public class InterfacciaUtenteGUI extends JFrame{
                     case "1. Creazione lista della spesa":
 
                         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
+                        labeltitolo.setVisible(false);
                         listaMenu1.setVisible(false);
                         // Pannello per il titolo
                         JPanel titlePanel = new JPanel();
@@ -151,6 +167,7 @@ public class InterfacciaUtenteGUI extends JFrame{
 
                     case "2. Eliminazione lista della spesa":
                         listaMenu1.setVisible(false);
+                        labeltitolo.setVisible(false);
                         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
 
                         // Pannello per il titolo
@@ -217,14 +234,13 @@ public class InterfacciaUtenteGUI extends JFrame{
 
                         // Aggiungi il pannello delle opzioni al centro del menuPanel
                         menuPanel.add(options2Panel);
-
                         menuPanel.add(btnMenu2);
                         break;
 
                     case "3. Creazione lista da file":
 
                         listaMenu1.setVisible(false);
-
+                        labeltitolo.setVisible(false);
                         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
 
                         // Pannello per il titolo
@@ -261,14 +277,9 @@ public class InterfacciaUtenteGUI extends JFrame{
                                     JOptionPane.showMessageDialog(null, "Inserisci un path per il file!", "Errore", JOptionPane.ERROR_MESSAGE);
                                     return; // Esci dal metodo senza fare altro
                                 }
-                                try {
-                                    GestoreListe.leggiDaFile(path,nomeFile); // Leggi la lista da file
-                                    JOptionPane.showMessageDialog(null, "Lista creata da file: " + nomeFile, "Successo", JOptionPane.INFORMATION_MESSAGE);
-                                    updateTextArea("Lista creata da file: " + nomeFile);
-                                } catch (GestoreException | IOException ex) {
-                                    JOptionPane.showMessageDialog(null, "Errore durante la creazione della lista da file: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-                                    updateTextArea("Errore: " + ex.getMessage());
-                                }
+                                GestoreListe.leggiDaFile(path,nomeFile); // Leggi la lista da file
+                                JOptionPane.showMessageDialog(null, "Lista creata da file: " + nomeFile, "Successo", JOptionPane.INFORMATION_MESSAGE);
+                                updateTextArea("Lista creata da file: " + nomeFile);
                                 textFieldNomeFile.setText("");
                             }
                         });
@@ -297,7 +308,7 @@ public class InterfacciaUtenteGUI extends JFrame{
 
                     case "4. Scrittura lista su file":
                         listaMenu1.setVisible(false);
-
+                        labeltitolo.setVisible(false);
                         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
 
                         // Pannello per il titolo
@@ -366,7 +377,7 @@ public class InterfacciaUtenteGUI extends JFrame{
 
                     case "5. Visualizzazione liste della spesa":
                         listaMenu1.setVisible(false);
-
+                        labeltitolo.setVisible(false);
                         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
 
                         // Pannello per il titolo
@@ -436,6 +447,7 @@ public class InterfacciaUtenteGUI extends JFrame{
 
                     case "6. Modifica lista della spesa":
                         listaMenu1.setVisible(false);
+                        labeltitolo.setVisible(false);
                         menuPanel.setLayout(new BoxLayout(menuPanel,BoxLayout.Y_AXIS));
 
                         // Pannello per il titolo
@@ -476,8 +488,9 @@ public class InterfacciaUtenteGUI extends JFrame{
                                     return; // Esci dal metodo senza fare altro
                                 }
 
-                                String[] opzioniModifica = {"Aggiungi articolo", "Rimuovi articolo", "Modifica articolo", "Visualizza lista della spesa"};
+                                String[] opzioniModifica = {"Modifica nome lista","Aggiungi articolo", "Rimuovi articolo", "Modifica articolo", "Ricerca articoli per categoria"};
                                 String sceltaModifica = (String) JOptionPane.showInputDialog(null, "Scegli un'operazione di modifica", "Modifica Lista della Spesa", JOptionPane.QUESTION_MESSAGE, null, opzioniModifica, opzioniModifica[0]);
+
 
                                 if (sceltaModifica != null) {
                                     // Rimuovi i componenti precedenti e aggiungi il nuovo pannello
@@ -485,6 +498,89 @@ public class InterfacciaUtenteGUI extends JFrame{
 
                                     // Gestisci la scelta dell'utente
                                     switch (sceltaModifica) {
+                                        case "Modifica nome lista":
+                                            listaMenu1.setVisible(false);
+                                            labeltitolo.setVisible(false);
+                                            menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
+
+                                            // Cerca la lista della spesa corrente basata su nomeLista
+                                            for (ListaSpesa lista : GestoreListe.listeSpesa) {
+                                                if (lista.getNome().equals(nomeLista)) {
+                                                    listaSpesaCorrente = lista;
+                                                    break;
+                                                }
+                                            }
+
+                                            // Controlla se la lista della spesa corrente è stata trovata
+                                            if (listaSpesaCorrente == null) {
+                                                JOptionPane.showMessageDialog(null, "La lista della spesa " + nomeLista + " non esiste.", "Errore", JOptionPane.ERROR_MESSAGE);
+                                                break;
+                                            }
+
+                                            // Pannello per il titolo
+                                            JPanel title8Panel = new JPanel();
+                                            title8Panel.setLayout(new BoxLayout(title8Panel, BoxLayout.X_AXIS));
+                                            JLabel title8Label = new JLabel("MODIFICA NOME LISTA: " + nomeLista);
+                                            title8Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a sinistra
+                                            title8Panel.add(title8Label);
+                                            title8Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a destra
+                                            menuPanel.add(title8Panel);
+
+                                            // Pannello per le opzioni
+                                            JPanel options8Panel = new JPanel(new FlowLayout());
+                                            options8Panel.add(new JLabel("Nuovo nome lista:"));
+                                            JTextField textFieldNuovoNomeLista = new JTextField(20);
+                                            options8Panel.add(textFieldNuovoNomeLista);
+                                            JButton btnModificaNomeLista = new JButton("Modifica");
+                                            options8Panel.add(btnModificaNomeLista);
+                                            menuPanel.add(options8Panel);
+
+                                            btnModificaNomeLista.addActionListener(new ActionListener() {
+                                                public void actionPerformed(ActionEvent e) {
+                                                    String nuovoNomeLista = textFieldNuovoNomeLista.getText();
+                                                    if (nuovoNomeLista != null && !nuovoNomeLista.isEmpty()) {
+                                                        // Controlla se esiste già una lista con il nuovo nome
+                                                        boolean nomeEsistente = false;
+                                                        for (ListaSpesa lista : GestoreListe.listeSpesa) {
+                                                            if (lista.getNome().equals(nuovoNomeLista)) {
+                                                                nomeEsistente = true;
+                                                                break;
+                                                            }
+                                                        }
+
+                                                        if (nomeEsistente) {
+                                                            JOptionPane.showMessageDialog(null, "Esiste già una lista con il nome " + nuovoNomeLista + ".", "Errore", JOptionPane.ERROR_MESSAGE);
+                                                        } else {
+                                                            listaSpesaCorrente.setNome(nuovoNomeLista);
+                                                            JOptionPane.showMessageDialog(null, "Nome della lista modificato con successo.", "Successo", JOptionPane.INFORMATION_MESSAGE);
+                                                        }
+                                                    } else {
+                                                        JOptionPane.showMessageDialog(null, "Il campo del nuovo nome deve essere compilato.", "Errore", JOptionPane.ERROR_MESSAGE);
+                                                    }
+                                                }
+                                            });
+
+                                            JButton btnMenu8 = new JButton("Torna al Menu");
+                                            btnMenu8.addActionListener(new ActionListener() {
+                                                @Override
+                                                public void actionPerformed(ActionEvent e) {
+                                                    menuPanel.removeAll();
+                                                    menuPanel.add(labeltitolo);
+                                                    menuPanel.add(listaMenu1);
+                                                    listaMenu1.setVisible(true);
+                                                    menuPanel.revalidate();
+                                                    menuPanel.repaint();
+                                                }
+                                            });
+
+                                            // Aggiungi il pulsante "Torna al Menu"
+                                            menuPanel.add(btnMenu8);
+                                            menuPanel.revalidate();
+                                            menuPanel.repaint();
+                                            break;
+
+
+
                                         case "Aggiungi articolo":
                                             // Pannello per il titolo
                                             JPanel title0Panel = new JPanel();
@@ -566,7 +662,7 @@ public class InterfacciaUtenteGUI extends JFrame{
                                                     String prezzoString = textFieldPrezzo.getText().trim();
                                                     String categoria = textFieldCategoria.getText().trim();
                                                     if (nomeLista.isEmpty() || nomeArticolo.isEmpty()) {
-                                                        JOptionPane.showMessageDialog(null, "Inserisci nome lista, nome articolo e quantità!", "Errore", JOptionPane.ERROR_MESSAGE);
+                                                        JOptionPane.showMessageDialog(null, "Inserisci nome articolo e prezzo!", "Errore", JOptionPane.ERROR_MESSAGE);
                                                         return;
                                                     }
 
@@ -625,7 +721,10 @@ public class InterfacciaUtenteGUI extends JFrame{
                                                             }
                                                         }
                                                     }
-
+                                                    textFieldNomeArticolo.setText("");
+                                                    textFieldQuantita.setText("");
+                                                    textFieldPrezzo.setText("");
+                                                    textFieldCategoria.setText("");
                                                     // Se l'articolo non esiste già, aggiungilo
                                                     for (ListaSpesa lista : GestoreListe.listeSpesa) {
                                                         if (lista.getNome().equals(nomeLista)) {
@@ -637,6 +736,7 @@ public class InterfacciaUtenteGUI extends JFrame{
                                                         }
                                                     }
                                                 }
+
                                             });
 
 
@@ -846,62 +946,98 @@ public class InterfacciaUtenteGUI extends JFrame{
                                             menuPanel.repaint();
                                             break;
 
-                                        case "Visualizza lista della spesa":
-                                            // Pannello per il titolo
-                                            JPanel title3Panel = new JPanel();
-                                            title3Panel.setLayout(new BoxLayout(title3Panel, BoxLayout.X_AXIS));
-                                            JLabel title3Label = new JLabel("VISUALIZZA LISTA DELLA SPESA:");
-                                            title3Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a sinistra
-                                            title3Panel.add(title3Label);
-                                            title3Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a destra
-                                            menuPanel.add(title3Panel);
+                                            case "Ricerca articoli per categoria":
+                                                listaMenu1.setVisible(false);
+                                                labeltitolo.setVisible(false);
+                                                menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
 
-                                            // Pannello per la visualizzazione della lista
-                                            JPanel options3Panel = new JPanel(new FlowLayout());
-                                            JTextArea textAreaLista = new JTextArea(10, 30);
-                                            textAreaLista.setEditable(false);
+                                                // Pannello per il titolo
+                                                JPanel title9Panel = new JPanel();
+                                                title9Panel.setLayout(new BoxLayout(title9Panel, BoxLayout.X_AXIS));
+                                                JLabel title9Label = new JLabel("RICERCA ARTICOLI PER CATEGORIA:");
+                                                title9Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a sinistra
+                                                title9Panel.add(title9Label);
+                                                title9Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a destra
+                                                menuPanel.add(title9Panel, "Title");
+                                                title9Panel.setVisible(true);
 
-                                            for (ListaSpesa lista : GestoreListe.listeSpesa) {
-                                                if (lista.getNome().equals(nomeLista)) {
-                                                    for (Articolo articolo : lista.getArticoli()) {
-                                                        textAreaLista.append("Articolo: " + articolo.getNome() + ", Quantità: " + articolo.getQuantita() + ", Prezzo: " + articolo.getCosto() + ", Categoria: " + articolo.getCategoria() + "\n");
+                                                // Pannello per le opzioni
+                                                JPanel options9Panel = new JPanel(new FlowLayout());
+
+                                                // Aggiungi le opzioni al pannello delle opzioni
+                                                options9Panel.add(new JLabel("Nome lista da cercare:"));
+                                                JTextField textFieldNomeLista9 = new JTextField(20);
+                                                options9Panel.add(textFieldNomeLista9);
+                                                options9Panel.add(new JLabel("Categoria articolo:"));
+                                                JTextField textFieldCercaCategoria = new JTextField(20);
+                                                options9Panel.add(textFieldCercaCategoria);
+                                                JButton btnCercaCategoria = new JButton("Cerca");
+                                                options9Panel.add(btnCercaCategoria);
+                                                menuPanel.add(options9Panel, "Options");
+
+                                                // Pannello per la visualizzazione della lista
+                                                JTextArea textAreaCategoria = new JTextArea(10, 30);
+                                                textAreaCategoria.setEditable(false);
+                                                JScrollPane scrollPaneCategoria = new JScrollPane(textAreaCategoria);
+
+                                                btnCercaCategoria.addActionListener(new ActionListener() {
+                                                    public void actionPerformed(ActionEvent e) {
+                                                        String nomeListaRicerca = textFieldNomeLista9.getText();
+                                                        String categoria = textFieldCercaCategoria.getText();
+                                                        if (nomeListaRicerca != null && !nomeListaRicerca.isEmpty()) {
+                                                            try {
+                                                                ListaSpesa listaSpesaRicerca = ricercaLista(nomeListaRicerca);
+                                                                if (listaSpesaRicerca == null) {
+                                                                    JOptionPane.showMessageDialog(null, "La lista della spesa " + nomeListaRicerca + " non esiste.", "Errore", JOptionPane.ERROR_MESSAGE);
+                                                                    return;
+                                                                }
+                                                                if (categoria != null && !categoria.isEmpty()) {
+                                                                    ArrayList<Articolo> articoliTrovati = new ArrayList<>();
+                                                                    for (Articolo articolo : listaSpesaRicerca.getArticoli()) {
+                                                                        if (articolo.getCategoria().equalsIgnoreCase(categoria)) {
+                                                                            articoliTrovati.add(articolo);
+                                                                        }
+                                                                    }
+                                                                    if (articoliTrovati.isEmpty()) {
+                                                                        JOptionPane.showMessageDialog(null, "Nessun articolo trovato nella categoria: " + categoria, "Risultato della ricerca", JOptionPane.INFORMATION_MESSAGE);
+                                                                    } else {
+                                                                        textAreaCategoria.setText(""); // Pulisci l'area di testo prima di aggiungere nuovi risultati
+                                                                        for (Articolo articolo : articoliTrovati) {
+                                                                            textAreaCategoria.append("Articolo: " + articolo.getNome() + ", Quantità: " + articolo.getQuantita() + ", Prezzo: " + articolo.getCosto() + ", Categoria: " + articolo.getCategoria() + "\n");
+                                                                        }
+                                                                    }
+                                                                }
+                                                            } catch (GestoreException ex) {
+                                                                JOptionPane.showMessageDialog(null, "Errore durante la ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+                                                            }
+                                                        }
                                                     }
-                                                    break;
-                                                }
-                                            }
+                                                });
 
-                                            options3Panel.add(new JScrollPane(textAreaLista));
-                                            menuPanel.add(options3Panel);
+                                                JButton btnMenu9 = new JButton("Torna al Menu");
+                                                btnMenu9.addActionListener(new ActionListener() {
+                                                    @Override
+                                                    public void actionPerformed(ActionEvent e) {
+                                                        // Rimuovi i componenti aggiunti durante la modifica della lista
+                                                        menuPanel.removeAll();
+                                                        // Riaggiungi il menu principale
+                                                        menuPanel.add(labeltitolo);
+                                                        menuPanel.add(listaMenu1);
+                                                        listaMenu1.setVisible(true);
+                                                        menuPanel.revalidate(); // Rivalida il layout del pannello
+                                                        menuPanel.repaint(); // Ridisegna il pannello
+                                                    }
+                                                });
 
-                                            // Bottone per tornare al menu principale
-                                            JButton btnMenu3 = new JButton("Torna al Menu");
-                                            btnMenu3.addActionListener(new ActionListener() {
-                                                @Override
-                                                public void actionPerformed(ActionEvent e) {
-                                                    // Rimuovi i componenti aggiunti durante la visualizzazione della lista
-                                                    menuPanel.removeAll();
-                                                    // Riaggiungi il menu principale
-                                                    menuPanel.add(labeltitolo);
-                                                    menuPanel.add(listaMenu1);
-                                                    listaMenu1.setVisible(true);
-                                                    menuPanel.revalidate(); // Rivalida il layout del pannello
-                                                    menuPanel.repaint(); // Ridisegna il pannello
-                                                }
-                                            });
-                                            options3Panel.add(btnMenu3);
-                                            menuPanel.add(options3Panel);
-
-                                            menuPanel.revalidate();
-                                            menuPanel.repaint();
-                                            break;
-
-
+                                                // Aggiungi il pulsante "Torna al Menu"
+                                                options9Panel.add(btnMenu9);
+                                                menuPanel.add(scrollPaneCategoria);
+                                                menuPanel.add(options9Panel);
+                                                menuPanel.add(btnMenu9);
+                                                break;
                                     }
                                 }
-
-
                             }
-
                         });
 
 
@@ -923,10 +1059,153 @@ public class InterfacciaUtenteGUI extends JFrame{
 
                         // Aggiungi il pannello delle opzioni al centro del menuPanel
                         menuPanel.add(options6Panel);
-
                         menuPanel.add(btnMenu6);
                         break;
 
+                    case "7. Ricerca rapida articolo":
+                        listaMenu1.setVisible(false);
+                        labeltitolo.setVisible(false);
+                        menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
+
+                        // Pannello per il titolo
+                        JPanel title7Panel = new JPanel();
+                        title7Panel.setLayout(new BoxLayout(title7Panel, BoxLayout.X_AXIS));
+                        JLabel title7Label = new JLabel("RICERCA RAPIDA ARTICOLO:");
+                        title7Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a sinistra
+                        title7Panel.add(title7Label);
+                        title7Panel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a destra
+                        menuPanel.add(title7Panel, "Title");
+                        title7Panel.setVisible(true);
+
+                        // Pannello per le opzioni
+                        JPanel options7Panel = new JPanel(new FlowLayout());
+
+                        // Aggiungi le opzioni al pannello delle opzioni
+                        options7Panel.add(new JLabel("Nome lista da cercare:"));
+                        JTextField textFieldNomeLista7 = new JTextField(20);
+                        options7Panel.add(textFieldNomeLista7);
+                        options7Panel.add(new JLabel("Prefisso articolo:"));
+                        JTextField textFieldPrefisso = new JTextField(20);
+                        options7Panel.add(textFieldPrefisso);
+                        JButton btnCercaLista = new JButton("Cerca");
+                        options7Panel.add(btnCercaLista);
+                        menuPanel.add(options7Panel, "Options");
+
+                        // Pannello per la visualizzazione della lista
+                        JTextArea textAreaLista = new JTextArea(10, 30);
+                        textAreaLista.setEditable(false);
+                        JScrollPane scrollPane = new JScrollPane(textAreaLista);
+
+                        btnCercaLista.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                String nomeListaRicerca = textFieldNomeLista7.getText();
+                                String prefisso = textFieldPrefisso.getText();
+                                if (nomeListaRicerca != null && !nomeListaRicerca.isEmpty()) {
+                                    try {
+                                        ListaSpesa listaSpesaRicerca = ricercaLista(nomeListaRicerca);
+                                        if (listaSpesaRicerca == null) {
+                                            JOptionPane.showMessageDialog(null, "La lista della spesa " + nomeListaRicerca + " non esiste.", "Errore", JOptionPane.ERROR_MESSAGE);
+                                            return;
+                                        }
+                                        if (prefisso != null && !prefisso.isEmpty()) {
+                                            ArrayList<Articolo> articoliTrovati = cercaArticoliPerPrefisso(listaSpesaRicerca, prefisso);
+                                            if (articoliTrovati.isEmpty()) {
+                                                JOptionPane.showMessageDialog(null, "Nessun articolo trovato con il prefisso: " + prefisso, "Risultato della ricerca", JOptionPane.INFORMATION_MESSAGE);
+                                            } else {
+                                                textAreaLista.setText(""); // Pulisci l'area di testo prima di aggiungere nuovi risultati
+                                                for (Articolo articolo : articoliTrovati) {
+                                                    textAreaLista.append("Articolo: " + articolo.getNome() + ", Quantità: " + articolo.getQuantita() + ", Prezzo: " + articolo.getCosto() + ", Categoria: " + articolo.getCategoria() + "\n");
+                                                }
+                                            }
+                                        }
+                                    } catch (GestoreException ex) {
+                                        JOptionPane.showMessageDialog(null, "Errore durante la ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                }
+                            }
+                        });
+
+                        JButton btnMenu7 = new JButton("Torna al Menu");
+                        btnMenu7.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                // Rimuovi i componenti aggiunti durante la modifica della lista
+                                menuPanel.removeAll();
+                                // Riaggiungi il menu principale
+                                menuPanel.add(labeltitolo);
+                                menuPanel.add(listaMenu1);
+                                listaMenu1.setVisible(true);
+                                menuPanel.revalidate(); // Rivalida il layout del pannello
+                                menuPanel.repaint(); // Ridisegna il pannello
+                            }
+                        });
+
+                        // Aggiungi il pannello delle opzioni al centro del menuPanel
+                        options7Panel.add(btnMenu7);
+                        menuPanel.add(scrollPane);
+                        menuPanel.add(options7Panel);
+                        menuPanel.add(btnMenu7);
+                        break;
+
+
+
+                    case "8. Visualizzazione lista della spesa":
+                        String nomeLista = JOptionPane.showInputDialog("Inserisci il nome della lista della spesa:");
+                        if (nomeLista != null && !nomeLista.isEmpty()) {
+                            try {
+                                 listaSpesa = ricercaLista(nomeLista);
+                                if (listaSpesa.getArticoli().isEmpty()) {
+                                    JOptionPane.showMessageDialog(null, "La lista della spesa è vuota", "Visualizzazione lista della spesa", JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    StringBuilder visualizzazione = new StringBuilder("Articoli nella lista della spesa:\n");
+                                    for (Articolo articolo : listaSpesa.getArticoli()) {
+                                        visualizzazione.append("Nome: ").append(articolo.getNome())
+                                                .append(", Quantità: ").append(articolo.getQuantita())
+                                                .append(", Prezzo: ").append(articolo.getCosto())
+                                                .append("\n");
+                                    }
+                                    JOptionPane.showMessageDialog(null, visualizzazione.toString(), "Visualizzazione lista della spesa", JOptionPane.INFORMATION_MESSAGE);
+                                    updateTextArea(visualizzazione.toString());
+                                }
+                            } catch (GestoreException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                        break;
+
+                    case "9. Aggiunta categoria":
+                        String nuovaCategoria = JOptionPane.showInputDialog("Inserisci il nome della nuova categoria:");
+                        if (nuovaCategoria != null && !nuovaCategoria.isEmpty()) {
+                            GestoreListe.aggiungiCategoria(nuovaCategoria);
+                            JOptionPane.showMessageDialog(null, "Categoria aggiunta: " + nuovaCategoria, "Aggiunta Categoria", JOptionPane.INFORMATION_MESSAGE);
+                            updateTextArea("Categoria aggiunta: " + nuovaCategoria);
+                        }
+                        break;
+                    case "10. Cancellazione categoria":
+                        String categoriaDaCancellare = JOptionPane.showInputDialog("Inserisci il nome della categoria da cancellare:");
+                        if (categoriaDaCancellare != null && !categoriaDaCancellare.isEmpty()) {
+                            try {
+                                GestoreListe.cancellaCategoria(categoriaDaCancellare);
+                            } catch (GestoreException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            JOptionPane.showMessageDialog(null, "Categoria rimossa: " + categoriaDaCancellare, "Rimozione Categoria", JOptionPane.INFORMATION_MESSAGE);
+                            updateTextArea("Categoria rimossa: " + categoriaDaCancellare);
+                        }
+                        break;
+                    case "11. Modifica categoria":
+                        String categoriaVecchia = JOptionPane.showInputDialog("Inserisci il nome della categoria da modificare:");
+                        String categoriaNuova = JOptionPane.showInputDialog("Inserisci il nuovo nome della categoria:");
+                        if (categoriaVecchia != null && !categoriaVecchia.isEmpty() && categoriaNuova != null && !categoriaNuova.isEmpty()) {
+                            try {
+                                GestoreListe.modificaCategoria(categoriaVecchia, categoriaNuova);
+                            } catch (ListaException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            JOptionPane.showMessageDialog(null, "Categoria modificata da " + categoriaVecchia + " a " + categoriaNuova, "Modifica Categoria", JOptionPane.INFORMATION_MESSAGE);
+                            updateTextArea("Categoria modificata da " + categoriaVecchia + " a " + categoriaNuova);
+                        }
+                        break;
 
                     default:
                         throw new IllegalStateException("Unexpected value: " + scelta);

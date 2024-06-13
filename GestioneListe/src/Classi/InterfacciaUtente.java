@@ -154,12 +154,7 @@ public class InterfacciaUtente extends JFrame {
                     String path = Input.readString();
                     System.out.print("Inserisci il nome della nuova lista: ");
                     String nuovo = Input.readString();
-                    try {
-                        GestoreListe.leggiDaFile(path, nuovo);
-                        System.out.println("Lista creata da file correttamente!");
-                    } catch (IOException | GestoreException e) {
-                        System.out.println("ERRORE: " + e.getMessage());
-                    }
+                    GestoreListe.leggiDaFile(path, nuovo);
                     break;
 
                 case 4:
@@ -236,24 +231,25 @@ public class InterfacciaUtente extends JFrame {
                                 } while (!isSi(modifica) && !modifica.equalsIgnoreCase("no"));
 
                                 if (isSi(modifica)) {
-                                    String nuovonome="";
-                                    nuovonome =Input.readString("Inserisci il nuovo nome della lista: ");
+                                    String nuovonome;
+                                    do {
+                                        nuovonome = Input.readString("Inserisci il nuovo nome della lista: ");
 
                                         if (nuovonome.equals("")) {
+                                            System.out.println("Il nome non può essere vuoto!");
+                                        } else {
                                             try {
-                                                throw new ListaException("Il nome non può essere vuoto!");
-                                            } catch (ListaException e) {
-                                                throw new RuntimeException(e);
+                                                GestoreListe.controlloEsistenza(nuovonome);
+                                                listaSpesa.setNome(nuovonome);
+                                                System.out.println("Il nuovo nome della lista è: " + nuovonome);
+                                                break;
+                                            } catch (GestoreException e) {
+                                                System.out.println("Errore: " + e.getMessage());
                                             }
                                         }
-                                        else {
-                                            listaSpesa.setNome(nuovonome);
-                                            System.out.println("Il nuovo nome della lista è: " +nuovonome);
-                                            break;
-                                        }
+                                    } while (nuovonome.equals(""));
                                 }
-                                else
-                                   break;
+                                break;
 
                             case 1:
                                 System.out.println("AGGIUNTA ARTICOLO \n");
@@ -440,8 +436,8 @@ public class InterfacciaUtente extends JFrame {
 
                 case 11:
                     System.out.println("MODIFICA CATEGORIA\n");
-                    String vecchiaCategoria = Input.readString("Inserisci la categoria da modificare:");
-                    String nuovaCategoriaModificata = Input.readString("Inserisci la nuova categoria:");
+                    String vecchiaCategoria = Input.readString("Inserisci il nome della categoria da modificare:");
+                    String nuovaCategoriaModificata = Input.readString("Inserisci il nuovo nome della categoria:");
                     if(cercaCategoria(vecchiaCategoria)!=null) {
                         //la categoria esiste
                         try {
@@ -549,10 +545,7 @@ public class InterfacciaUtente extends JFrame {
         }
     }
 
-
-
-
-    private static ArrayList<Articolo> cercaArticoliPerPrefisso(ListaSpesa listaSpesa, String prefisso) {
+    static ArrayList<Articolo> cercaArticoliPerPrefisso(ListaSpesa listaSpesa, String prefisso) {
         ArrayList<Articolo> articoliTrovati = new ArrayList<>();
         for (Articolo articolo : listaSpesa.getArticoli()) {
             if (articolo.getNome().startsWith(prefisso)) {

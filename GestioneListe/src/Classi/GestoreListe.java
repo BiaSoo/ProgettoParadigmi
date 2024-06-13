@@ -50,22 +50,58 @@ public class GestoreListe {
         throw new GestoreException("Lista della spesa non trovata!");
     }
 
-    public static void leggiDaFile(String path, String nomeFile) throws GestoreException, IOException {
-        File file = new File(path);
-        if (!file.exists()) {
-            throw new GestoreException("Il path inserito non corrisponde ad alcun file!");
-        }
-        controlloEsistenza(nomeFile);
-        ListaSpesa listaSpesa = new ListaSpesa(nomeFile);
-        try (BufferedReader buffer = new BufferedReader(new FileReader(file))) {
+    public static void leggiDaFile(String path, String nomeLista) {
+        BufferedReader reader = null;
+        try {
+            // Aggiungi la lista vuota
+            aggiungiLista(nomeLista);
+
+            // Recupera la lista appena aggiunta
+            ListaSpesa nuovaLista = null;
+            for (ListaSpesa lista : listeSpesa) {
+                if (lista.getNome().equals(nomeLista)) {
+                    nuovaLista = lista;
+                    break;
+                }
+            }
+
+            if (nuovaLista == null) {
+                throw new GestoreException("Errore nell'aggiunta della lista.");
+            }
+
+            reader = new BufferedReader(new FileReader(path));
+
             String line;
-            while ((line = buffer.readLine()) != null) {
-                // Logica per leggere e aggiungere articoli alla listaSpesa
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",\\s*");
+                if (parts.length == 4) {
+                    String nomeArticolo = parts[0].trim(); // Trim per rimuovere spazi bianchi extra
+                    int quantita = Integer.parseInt(parts[1].trim());
+                    float prezzo = Float.parseFloat(parts[2].trim());
+                    String categoria = parts[3].trim();
+
+                    Articolo articolo = new Articolo(nomeArticolo, quantita, categoria, prezzo);
+                    nuovaLista.aggiungiArticolo(articolo);
+                }
+            }
+
+            aggiornaCategorie(); // Aggiorna le categorie dopo aver aggiunto gli articoli
+
+            System.out.println("Lista aggiunta con successo!");
+        } catch (IOException | NumberFormatException | GestoreException e) {
+            System.out.println("Errore durante la lettura del file o l'aggiunta della lista: " + e.getMessage());
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    System.out.println("Errore nella chiusura del reader: " + e.getMessage());
+                }
             }
         }
-        listeSpesa.add(listaSpesa);
-        aggiornaCategorie(); // Aggiorna le categorie dopo l'aggiunta della lista dal file
     }
+
+
 
     public static int numeroListe() {
         return listeSpesa.size();
