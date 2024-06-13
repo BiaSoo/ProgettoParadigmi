@@ -74,14 +74,15 @@ public class ListaSpesa implements Iterable<Articolo>
     public void scriviSuFile(String nomeFile) throws ListaException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeFile))) {
             for (Articolo articolo : articoli) {
-                // Scrivi i dettagli dell'articolo nel file, ad esempio: nome, categoria, quantità, costo
-                writer.write(articolo.getNome() + "," + articolo.getCategoria() + "," + articolo.getQuantita() + "," + articolo.getCosto());
+                // Scrivi i dettagli dell'articolo nel file con lo stesso pattern utilizzato in leggiDaFile
+                writer.write(articolo.getNome() + ", " + articolo.getQuantita() + ", " + articolo.getCosto() + ", " + articolo.getCategoria());
                 writer.newLine(); // Vai a capo dopo ogni articolo
             }
         } catch (IOException e) {
             throw new ListaException("Impossibile scrivere su file: " + e.getMessage());
         }
     }
+
 
 
     public ArrayList<Articolo> getArticoli() {
