@@ -1,4 +1,4 @@
-panini, 2, 1.5, Alimentari
+Pane, 2, 1.5, Alimentari
 Latte, 1, 0.99, Alimentari
 Sapone, 3, 2.5, Igiene
 Pasta, 5, 0.8, Alimentari

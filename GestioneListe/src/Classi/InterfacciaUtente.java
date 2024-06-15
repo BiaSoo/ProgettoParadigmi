@@ -6,10 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import static Classi.GestoreListe.*;
+import static Classi.GestoreListe.cercaCategoria;
+import static Classi.GestoreListe.ricercaLista;
 
 
 public class InterfacciaUtente extends JFrame {
@@ -469,7 +469,7 @@ public class InterfacciaUtente extends JFrame {
             throw new GestoreException("Non risulta presenta alcuna lista della spesa, creane prima una!");
     }
 
-    private static void aggiungiArticolo(ListaSpesa listaSpesa) throws ListaException {
+    static void aggiungiArticolo(ListaSpesa listaSpesa) throws ListaException {
         String nomeArticolo, categoriaArticolo = "non categorizzato", quantitaArticolo = "1", costoArticolo;
         nomeArticolo = Input.readString("Inserisci il nome dell'articolo: ").trim();
 
