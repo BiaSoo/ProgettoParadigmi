@@ -1,8 +1,9 @@
 package Classi;
 
-import java.util.HashSet;
-import java.util.Set;
-
+/**
+ * Classe per la creazione di un articolo
+ * @author Gabriele Magenta Biasina Matricola: 20044231
+ */
 public class Articolo
 {
     private String nome;
@@ -10,7 +11,13 @@ public class Articolo
     private String categoria;
     private float costo;
 
-
+    /**
+     * Costruttore
+     * @param nome
+     * @param quantita
+     * @param categoria
+     * @param costo
+     */
     public Articolo(String nome,int quantita, String categoria,float costo){
         this.nome=nome;
         this.quantita=quantita;
@@ -19,7 +26,9 @@ public class Articolo
 
     }
 
-
+    /**
+     * Getter e Setter
+     */
     public String getNome() {
         return nome;
     }
@@ -52,6 +61,10 @@ public class Articolo
         this.costo = costo;
     }
 
+    /**
+     * Metodo per ritornare in stringa tutti gli elementi di articolo
+     * @return
+     */
     public String toString() {
         return "Nome: " + nome + ", Quantità: " + quantita + ", Categoria: " + categoria + ", Costo: " + costo;
     }

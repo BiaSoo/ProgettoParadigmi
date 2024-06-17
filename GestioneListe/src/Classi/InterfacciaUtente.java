@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import static Classi.GestoreListe.cercaCategoria;
 import static Classi.GestoreListe.ricercaLista;
 
-
+/**
+ * Classe che contiene l'interfaccia di partenza e il passaggio alla CLI piuttosto che alla GUI
+ * @author Gabriele Magenta Biasina Matricola: 20044231
+ */
 public class InterfacciaUtente extends JFrame {
-    private static boolean isGUI = true; // Flag per tenere traccia dello stato dell'interfaccia
+    private static boolean isGUI = true;
 
     public static class InterfacciaSwing extends JFrame {
 
@@ -25,35 +28,36 @@ public class InterfacciaUtente extends JFrame {
             }
         }
 
+        /**
+         * Metodo che contiene l'interfaccia grafica di partenza
+         */
         public InterfacciaSwing() {
-            // Implementazione dell'interfaccia grafica
             super("Interfaccia Grafica");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setSize(800, 500);
 
             textArea = new JTextArea();
 
-            // Pannello principale
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
             JPanel titlePanel = new JPanel();
             titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
             JLabel labeltitolo = new JLabel("Benvenuto! ");
-            titlePanel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a sinistra
+            titlePanel.add(Box.createHorizontalGlue());
             titlePanel.add(labeltitolo);
-            titlePanel.add(Box.createHorizontalGlue()); // Aggiungi spazio vuoto a destra
+            titlePanel.add(Box.createHorizontalGlue());
             mainPanel.add(titlePanel);
 
-            // Passaggio alla CLI
+
             JPanel buttonPanel = new JPanel();
             JButton switchToCLIButton = new JButton("Passa a CLI");
             switchToCLIButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    isGUI = false; // Imposta il flag su false per passare a CLI
-                    dispose(); // Chiudi l'interfaccia grafica
+                    isGUI = false;
+                    dispose();
                     try {
-                        InterfacciaCLI(); // Avvia l'interfaccia da riga di comando
+                        InterfacciaCLI();
                     } catch (ListaException | GestoreException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -64,20 +68,17 @@ public class InterfacciaUtente extends JFrame {
             stayOnGUIButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    isGUI = true; // Imposta il flag su true per restare sulla GUI
+                    isGUI = true;
                     InterfacciaUtenteGUI interfacciaUtenteGUI = new InterfacciaUtenteGUI();
-                    interfacciaUtenteGUI.Interfaccia(); // Interfaccia grafica
+                    interfacciaUtenteGUI.Interfaccia();
                     stayOnGUIButton.setVisible(false);
                     switchToCLIButton.setVisible(false);
                     dispose();
                 }
             });
-
             buttonPanel.add(switchToCLIButton);
             buttonPanel.add(stayOnGUIButton);
-
             mainPanel.add(buttonPanel, BorderLayout.CENTER);
-
             add(mainPanel);
         }
     }
@@ -85,18 +86,21 @@ public class InterfacciaUtente extends JFrame {
 
     public static void main(String[] args) throws ListaException, GestoreException {
         if (isGUI) {
-            // Avvia l'interfaccia grafica
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     new InterfacciaSwing().setVisible(true);
                 }
             });
         } else {
-            // Avvia l'interfaccia da riga di comando
             InterfacciaCLI();
         }
     }
 
+    /**
+     * Metodo che contiene l'interfaccia da riga di comando
+     * @throws ListaException
+     * @throws GestoreException
+     */
     private static void InterfacciaCLI() throws ListaException, GestoreException {
         int scelta=0;
         String x, nome, nomeArticolo = "", categoriaArticolo = "", quantitaArticolo = "", costoArticolo = "", file = "lista.txt";
@@ -125,7 +129,9 @@ public class InterfacciaUtente extends JFrame {
             System.out.println("Inserisci l'operazione che si desidera effettuare: ");
 
             switch (scelta=Input.readInt()) {
-
+                /**
+                 * Case per la creazione della lista
+                 */
                 case 1:
                     System.out.println("CREAZIONE LISTA DELLA SPESA\n");
                     System.out.println("Inserisci il nome della lista che vuoi creare: ");
@@ -136,7 +142,9 @@ public class InterfacciaUtente extends JFrame {
                         System.out.println("ERRORE: " + e.getMessage());
                     }
                     break;
-
+                /**
+                 * Case per la cancellazione della lista
+                 */
                 case 2:
                     System.out.println("CANCELLAZIONE LISTA DELLA SPESA\n");
                     System.out.print("Inserisci il nome della lista che si intende cancellare: ");
@@ -147,7 +155,9 @@ public class InterfacciaUtente extends JFrame {
                         System.out.println("ERRORE: " + e.getMessage());
                     }
                     break;
-
+                /**
+                 * Case per la creazione della lista da file
+                 */
                 case 3:
                     System.out.println("CREAZIONE LISTA DELLA SPESA DA FILE\n");
                     System.out.print("Inserisci il percorso del file da cui cercare la lista: ");
@@ -156,7 +166,9 @@ public class InterfacciaUtente extends JFrame {
                     String nuovo = Input.readString();
                     GestoreListe.leggiDaFile(path, nuovo);
                     break;
-
+                /**
+                 * Case per la scrittura della lista su file
+                 */
                 case 4:
                     System.out.println("SCRITTURA LISTA DELLA SPESA SU FILE\n");
                     System.out.println("Inserisci il nome della lista che si vuole scrivere sul file: ");
@@ -172,7 +184,9 @@ public class InterfacciaUtente extends JFrame {
                     } else
                         System.out.println("Lista della spesa non trovata!");
                     break;
-
+                /**
+                 * Case per la creazione delle liste della spesa presenti nel gestore
+                 */
                 case 5:
                     System.out.println("VISUALIZZAZIONE LISTE DELLA SPESA\n");
                     int numeroListe = GestoreListe.numeroListe();
@@ -189,7 +203,9 @@ public class InterfacciaUtente extends JFrame {
                     }
 
                     break;
-
+                /**
+                 * Case per la modifica della lista che contiene un sotto menu
+                 */
                 case 6:
                     System.out.println("MODIFICA LISTA DELLA SPESA\n");
                     try {
@@ -222,6 +238,9 @@ public class InterfacciaUtente extends JFrame {
 
                         System.out.println("Inserisci l'operazione che si desidera effettuare: ");
                         switch (Integer.parseInt(Input.readString())) {
+                            /**
+                             * Case per la modifica del nome della lista
+                             */
                             case 0:
                                 System.out.println("MODIFICA NOME LISTA DELLA SPESA \n");
                                 System.out.println("Attualmente il nome della tua lista è: " + listaSpesa.getNome());
@@ -250,11 +269,16 @@ public class InterfacciaUtente extends JFrame {
                                     } while (nuovonome.equals(""));
                                 }
                                 break;
-
+                            /**
+                             * Case per l'aggiunta di un articolo alla lista
+                             */
                             case 1:
                                 System.out.println("AGGIUNTA ARTICOLO \n");
                                 aggiungiArticolo(listaSpesa);
                                 break;
+                            /**
+                             * Case per la cancellazione di un articolo dalla lista
+                             */
                             case 2:
                                 System.out.println("ELIMINA ARTICOLO \n");
                                 System.out.println("Inserisci l'articolo da eliminare");
@@ -266,7 +290,9 @@ public class InterfacciaUtente extends JFrame {
                                     System.out.println("ERRORE: " + e.getMessage());
                                 }
                                 break;
-
+                            /**
+                             * Case per la modifica di un articolo della lista, contiene un sottomenu
+                             */
                             case 3:
                                 System.out.println("MODIFICA ARTICOLO \n");
 
@@ -274,9 +300,7 @@ public class InterfacciaUtente extends JFrame {
                                 System.out.println("A quale articolo vorresti effettuare delle modifiche? ");
                                 articolo = listaSpesa.cercaArticoloPerNome(Input.readString());
                                 if (articolo != null) {
-                                    // Procedi con le modifiche all'articolo
                                     System.out.println("Articolo trovato: " + articolo.getNome());
-                                    // Aggiungi qui il codice per modificare l'articolo
                                 } else {
                                     System.out.println("Articolo inserito non trovato!");
                                 }
@@ -295,6 +319,9 @@ public class InterfacciaUtente extends JFrame {
                                     Articolo ar = articoli.get(0);
                                     try {
                                         switch (Integer.parseInt(Input.readString())) {
+                                            /**
+                                             * Case per la modifica del nome dell'articolo
+                                             */
                                             case 1:
                                                 System.out.println("MODIFICA NOME ARTICOLO \n");
                                                 try {
@@ -303,7 +330,9 @@ public class InterfacciaUtente extends JFrame {
                                                     e.printStackTrace();
                                                 }
                                                 break;
-
+                                            /**
+                                             * Case per la modifica della quantità dell'articolo
+                                             */
                                             case 2:
                                                 System.out.println("MODIFICA QUANTITA' ARTICOLO \n");
                                                 try {
@@ -312,7 +341,9 @@ public class InterfacciaUtente extends JFrame {
                                                     e.printStackTrace();
                                                 }
                                                 break;
-
+                                            /**
+                                             * Case per la modifica della categoria dell'articolo
+                                             */
                                             case 3:
                                                 System.out.println("MODIFICA CATEGORIA ARTICOLO \n");
                                                 try {
@@ -321,7 +352,9 @@ public class InterfacciaUtente extends JFrame {
                                                     e.printStackTrace();
                                                 }
                                                 break;
-
+                                            /**
+                                             * Case per la modifica del prezzo dell'articolo
+                                             */
                                             case 4:
                                                 System.out.println("MODIFICA PREZZO ARTICOLO \n");
                                                 try {
@@ -330,7 +363,9 @@ public class InterfacciaUtente extends JFrame {
                                                     e.printStackTrace();
                                                 }
                                                 break;
-
+                                            /**
+                                             * Uscita dal sotto-menu
+                                             */
                                             case 5:
                                                 System.out.println("USCITA\n");
                                                 return;
@@ -342,16 +377,15 @@ public class InterfacciaUtente extends JFrame {
                                     System.out.println("Non risulta nessuna lista della spesa!");
                                 }
                                 break;
-
+                            /**
+                             * Case per la ricerca degli articoli data la categoria
+                             */
                             case 4:
                                 System.out.println("RICERCA ARTICOLI PER CATEGORIA \n");
                                 try {
                                     String categoriaDaCercare = Input.readString("Inserisci la categoria da cercare: ");
                                     boolean articoliTrovati = false;
-
-                                    // Itera attraverso tutte le liste della spesa
                                     for (ListaSpesa lista : GestoreListe.getListeSpesa()) {
-                                        // Itera attraverso gli articoli della lista corrente
                                         for (Articolo articolo4 : lista.getArticoli()) {
                                             if (articolo4.getCategoria().equalsIgnoreCase(categoriaDaCercare)) {
                                                 System.out.println("Lista: " + lista.getNome() + " - Articolo: " + articolo4.getNome() + ", Quantità: " + articolo4.getQuantita() + ", Costo: " + articolo4.getCosto());
@@ -367,7 +401,9 @@ public class InterfacciaUtente extends JFrame {
                                     System.out.println("Errore durante la ricerca degli articoli: " + e.getMessage());
                                 }
                                 break;
-
+                            /**
+                             * Uscita dal sotto-menu
+                             */
                             case 5:
                                 System.out.println("USCITA\n");
                                 return;
@@ -377,7 +413,9 @@ public class InterfacciaUtente extends JFrame {
                                 break;
                         }
                     } while (true);
-
+                /**
+                 * Case per la ricerca rapida di un articolo dato prefisso e nome della lista
+                 */
                 case 7:
                     System.out.println("RICERCA RAPIDA ARTICOLO\n");
                     String prefisso=Input.readString("Inserisci il prefisso da cercare:");
@@ -394,7 +432,9 @@ public class InterfacciaUtente extends JFrame {
                     } else
                         System.out.println("Lista della spesa non trovata.");
                     break;
-
+                /**
+                 * Case per la visualizzazione della lista della spesa
+                 */
                 case 8:
                     System.out.println("VISUALIZZAZIONE LISTA DELLA SPESA\n");
                     nomeLista = Input.readString("Inserisci il nome della lista da cercare:");
@@ -421,25 +461,31 @@ public class InterfacciaUtente extends JFrame {
                     } else {
                         System.out.println("Lista della spesa non trovata.");
                     }
-
                     break;
+                /**
+                 * Case per l'aggiunta di una nuova categoria
+                 */
                 case 9:
                     System.out.println("AGGIUNGI CATEGORIA\n");
                     String nuovaCategoria = Input.readString("Inserisci la nuova categoria:");
                     GestoreListe.aggiungiCategoria(nuovaCategoria);
                     break;
+                /**
+                 * Case per la cancellazione di una categoria
+                 */
                 case 10:
                     System.out.println("CANCELLAZIONE CATEGORIA\n");
                     String categoriaDaCancellare = Input.readString("Inserisci la categoria da cancellare:");
                     GestoreListe.cancellaCategoria(categoriaDaCancellare);
                     break;
-
+                /**
+                 * Case per la modifica di una categoria
+                 */
                 case 11:
                     System.out.println("MODIFICA CATEGORIA\n");
                     String vecchiaCategoria = Input.readString("Inserisci il nome della categoria da modificare:");
                     String nuovaCategoriaModificata = Input.readString("Inserisci il nuovo nome della categoria:");
                     if(cercaCategoria(vecchiaCategoria)!=null) {
-                        //la categoria esiste
                         try {
                             GestoreListe.modificaCategoria(vecchiaCategoria, nuovaCategoriaModificata);
                         } catch (ListaException e) {
@@ -449,7 +495,9 @@ public class InterfacciaUtente extends JFrame {
                     else
                         throw new GestoreException("La categoria inserita non esiste!");
                     break;
-
+                /**
+                 * Uscita dal programma
+                 */
                 case 12:
                     System.out.println("USCITA DAL PROGRAMMA\n");
                     System.out.println("Premi invio per uscire dal programma: ");
@@ -464,11 +512,20 @@ public class InterfacciaUtente extends JFrame {
 
     }
 
+    /**
+     * Metodo per il controllo dell'esistenza di una lista
+     * @throws GestoreException
+     */
     private static void controlloListe() throws GestoreException {
         if (GestoreListe.listeSpesa.isEmpty())
             throw new GestoreException("Non risulta presenta alcuna lista della spesa, creane prima una!");
     }
 
+    /**
+     * Metodo per l'aggiunta di un articolo nella lista
+     * @param listaSpesa
+     * @throws ListaException
+     */
     static void aggiungiArticolo(ListaSpesa listaSpesa) throws ListaException {
         String nomeArticolo, categoriaArticolo = "non categorizzato", quantitaArticolo = "1", costoArticolo;
         nomeArticolo = Input.readString("Inserisci il nome dell'articolo: ").trim();
@@ -476,7 +533,7 @@ public class InterfacciaUtente extends JFrame {
         String inputCategoria = Input.readString("Inserisci la categoria dell'articolo: ").trim();
         if (!inputCategoria.isEmpty()) {
             categoriaArticolo = inputCategoria;
-            GestoreListe.aggiungiCategoria(categoriaArticolo);  // Usa il metodo per aggiungere la categoria
+            GestoreListe.aggiungiCategoria(categoriaArticolo);
         }
 
         String inputQuantita = Input.readString("Inserisci la quantità dell'articolo: ").trim();
@@ -533,18 +590,23 @@ public class InterfacciaUtente extends JFrame {
                 return;
             }
         } else {
-            // Aggiungi il nuovo articolo
             Articolo nuovoArticolo = new Articolo(nomeArticolo, Integer.parseInt(quantitaArticolo), categoriaArticolo, costoArticoloFloat);
             try {
                 listaSpesa.aggiungiArticolo(nuovoArticolo);
                 System.out.println("Articolo aggiunto alla lista " + listaSpesa.getNome() + "!");
-                GestoreListe.aggiornaCategorie();  // Aggiorna le categorie dopo l'aggiunta dell'articolo
+                GestoreListe.aggiornaCategorie();
             } catch (Exception e) {
                 System.out.println("Errore durante l'aggiunta dell'articolo: " + e.getMessage());
             }
         }
     }
 
+    /**
+     * Metodo per la ricerca di articoli dato un prefisso e una lista della spesa
+     * @param listaSpesa
+     * @param prefisso
+     * @return articoli trovati
+     */
     static ArrayList<Articolo> cercaArticoliPerPrefisso(ListaSpesa listaSpesa, String prefisso) {
         ArrayList<Articolo> articoliTrovati = new ArrayList<>();
         for (Articolo articolo : listaSpesa.getArticoli()) {
@@ -555,6 +617,11 @@ public class InterfacciaUtente extends JFrame {
         return articoliTrovati;
     }
 
+    /**
+     * Metodo per la richiesta di conferma
+     * @param input
+     * @return
+     */
     private static boolean isSi(String input) {
         return input.equalsIgnoreCase("si")
                 || input.equalsIgnoreCase("s")

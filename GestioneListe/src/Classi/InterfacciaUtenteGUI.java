@@ -10,23 +10,21 @@ import java.util.ArrayList;
 import static Classi.GestoreListe.ricercaLista;
 import static Classi.InterfacciaUtente.cercaArticoliPerPrefisso;
 
-/*TODO:
- * 5: ricerca rapida articolo: vanno posti dei controlli e una migliore gestione delle eccezioni
- * rimuovere quel fastidioso ritorno alla scelta gui o cli, si ritorna sempre al menù principale
- *
- */
 
 /**
  *  Interfaccia per l'utilizzo dell'ambiente GUI
- *  
  * @author Gabriele Magenta Biasina Matricola: 20044231
  */
 public class InterfacciaUtenteGUI extends JFrame{
     private static JTextArea textArea;
     private ListaSpesa listaSpesaCorrente = null;
-
-
     ListaSpesa listaSpesa;
+
+    /**
+     * Metodo per la ricerca di una lista se già in uso
+     * @param nomeLista
+     * @return
+     */
     private boolean nomeListaGiaInUso(String nomeLista) {
         for (ListaSpesa lista : GestoreListe.listeSpesa) {
             if (lista.getNome().equals(nomeLista)) {
