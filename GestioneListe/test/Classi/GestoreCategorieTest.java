@@ -12,7 +12,7 @@ public class GestoreCategorieTest {
 
     @BeforeEach
     public void setUp() {
-        GestoreCategorie.getCategorie().clear(); // Clear categories before each test
+        GestoreCategorie.getCategorie().clear();
     }
 
     @Test
@@ -31,15 +31,9 @@ public class GestoreCategorieTest {
     public void testAggiungiCategoriaDuplicata() {
         String categoria = "Verdura";
         GestoreCategorie gestore = new GestoreCategorie();
-
-        gestore.aggiungiCategoria(categoria); // Add category
-
-        // Add duplicate category
-        gestore.aggiungiCategoria(categoria); // Add duplicate
-
-        // Verify that the category is present only once
+        gestore.aggiungiCategoria(categoria);
+        gestore.aggiungiCategoria(categoria);
         Set<String> actualCategories = GestoreCategorie.getCategorie();
-
         assertTrue(actualCategories.contains(categoria));
     }
 
@@ -112,11 +106,9 @@ public class GestoreCategorieTest {
         nuoveCategorie.add("Frutta");
 
         GestoreCategorie gestore = new GestoreCategorie();
-        gestore.aggiungiCategoria("Cereali"); // Add existing category
-
+        gestore.aggiungiCategoria("Cereali");
         gestore.aggiornaCategorie(nuoveCategorie);
 
-        // Verify that existing categories are replaced and new ones are added
         Set<String> actualCategories = GestoreCategorie.getCategorie();
         assertEquals(nuoveCategorie, actualCategories);
     }

@@ -1,8 +1,11 @@
 package Classi;
 
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ListaSpesaTest {
 
@@ -81,14 +84,10 @@ public class ListaSpesaTest {
     public void testScriviSuFile() throws ListaException {
         String nomeFile = "lista_spesa.txt";
         listaSpesa.scriviSuFile(nomeFile);
-
-        // Verifica che il file sia stato creato e contenga i dati corretti
-        // (Questo test richiede l'accesso al filesystem e non può essere eseguito in un ambiente di test online)
     }
 
     @Test
     public void testAggiornaArticoloValido() throws ListaException, ArticoloException {
-        // Retrieve an existing article from the list (assuming "Mele" exists)
         Articolo articoloDaAggiornare = listaSpesa.cercaArticoloPerNome("Mele");
         assertNotNull(articoloDaAggiornare, "Articolo con nome 'Mele' non trovato!");
 
@@ -98,8 +97,6 @@ public class ListaSpesaTest {
         float nuovoCosto = 1.8f;
 
         listaSpesa.aggiornaArticolo(articoloDaAggiornare, nuovoNome, nuovaQuantita, nuovaCategoria, nuovoCosto);
-
-        // Verify the updated article details
         Articolo articoloAggiornato = listaSpesa.cercaArticoloPerNome(nuovoNome);
         assertNotNull(articoloAggiornato);
         assertEquals(nuovoNome, articoloAggiornato.getNome());

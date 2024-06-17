@@ -1,10 +1,11 @@
 package Classi;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +13,7 @@ public class GestoreListeTest {
 
     @BeforeEach
     public void setup() {
-        GestoreListe.getListeSpesa().clear(); // Pulisci la lista prima di ogni test
+        GestoreListe.getListeSpesa().clear();
     }
 
     @Test
@@ -43,12 +44,10 @@ public class GestoreListeTest {
     void testRimuoviListaNonEsistente() {
         String nomeListaInesistente = "ListaInesistente";
 
-        // Verifica che una GestoreException sia lanciata
         GestoreException exception = assertThrows(GestoreException.class, () -> {
             GestoreListe.rimuoviLista(nomeListaInesistente);
         });
 
-        // Verifica che il messaggio di eccezione contenga la stringa attesa
         assertTrue(exception.getMessage().contains("Lista della spesa non trovata!"),
                 "Il messaggio di eccezione non corrisponde a quello atteso.");
     }
@@ -73,22 +72,18 @@ public class GestoreListeTest {
 
     @Test
     public void testLeggiDaFile() throws IOException, GestoreException {
-        // Creazione di un file temporaneo
         File tempFile = File.createTempFile("testFile", ".txt");
         FileWriter writer = new FileWriter(tempFile);
         writer.write("Mela, 2, 0.5, Frutta\n");
         writer.write("Pane, 1, 1.0, Panetteria\n");
         writer.close();
 
-        // Leggi il file
         GestoreListe.leggiDaFile(tempFile.getAbsolutePath(), "Lista1");
 
-        // Verifica la lista e gli articoli
         ListaSpesa lista = GestoreListe.ricercaLista("Lista1");
         assertNotNull(lista, "La lista dovrebbe essere stata aggiunta.");
         assertEquals(2, lista.getArticoli().size(), "La lista dovrebbe contenere due articoli.");
 
-        // Cancella il file temporaneo
         tempFile.delete();
     }
 
@@ -98,7 +93,6 @@ public class GestoreListeTest {
         ListaSpesa lista = GestoreListe.ricercaLista("Lista1");
         lista.aggiungiArticolo(new Articolo("Mela", 2, "Frutta", 0.5f));
 
-        // Assicurarsi che la categoria "Frutta" esista prima di tentare di modificarla
         GestoreListe.aggiungiCategoria("Frutta");
 
         GestoreListe.modificaCategoria("Frutta", "Frutta fresca");
